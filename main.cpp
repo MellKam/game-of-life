@@ -1,8 +1,6 @@
 #include <vector>
 #include <iostream>
-#include <memory>
 #include <random>
-#include <ctime>
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -123,5 +121,7 @@ int main()
     std::cout << CLEAR_ASCII;
     board->print();
   }
+
+  delete board;
   return 0;
 }
