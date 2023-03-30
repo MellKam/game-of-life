@@ -2,13 +2,14 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <ctime>
 
 std::random_device rd;
 std::mt19937 gen(rd());
 
-int rand_from_range(int low, int high)
+bool randBool(double successPercentage)
 {
-  std::uniform_int_distribution<int> dist(low, high);
+  std::bernoulli_distribution dist(successPercentage);
   return dist(gen);
 }
 
@@ -24,7 +25,7 @@ public:
   size_t R;
   size_t C;
 
-  Board(size_t rowSize, size_t columnSize)
+  Board(size_t rowSize, size_t columnSize, double initProbability = 0.3)
       : board(rowSize, std::vector<bool>(columnSize, false))
   {
     this->C = columnSize;
@@ -34,7 +35,7 @@ public:
     {
       for (int c = 0; c < C; c++)
       {
-        this->board[r][c] = (bool)rand_from_range(0, 1);
+        this->board[r][c] = randBool(initProbability);
       }
     }
   }
@@ -100,13 +101,18 @@ public:
   }
 };
 
+// clear screen and move cursor to top left
+const char *CLEAR_ASCII = "\033[2J\033[1;1H";
+
 int main()
 {
   size_t boardSize;
   std::cout << "Enter the size of board: ";
   std::cin >> boardSize;
+  std::cin.get();
 
   auto board = new Board(boardSize, boardSize);
+  std::cout << CLEAR_ASCII;
   board->print();
 
   while (true)
@@ -114,7 +120,7 @@ int main()
     std::cout << "\nPress Enter to move to the next state: ";
     std::cin.ignore();
     board->update();
-    std::cout << "\033[2J\033[1;1H"; // clear screen and move cursor to top left
+    std::cout << CLEAR_ASCII;
     board->print();
   }
   return 0;
